@@ -2,9 +2,6 @@ import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import HTMLFlipBook from 'react-pageflip'
 import 'page-flip/src/Style/stPageFlip.css'
 
-const grain =
-  `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E")`
-
 const TOTAL = 12
 
 const css = `
@@ -14,7 +11,7 @@ const css = `
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px 104px;
+  padding: 24px 16px;
   position: relative;
   -webkit-user-select: none;
   user-select: none;
@@ -30,15 +27,6 @@ const css = `
   -webkit-user-select: text;
   user-select: text;
 }
-.fb-root::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: ${grain};
-  opacity: .8;
-  pointer-events: none;
-  z-index: 1;
-}
 .fb-stage {
   position: relative;
   z-index: 2;
@@ -47,9 +35,7 @@ const css = `
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background:
-    ${grain},
-    linear-gradient(135deg, #FFFDF9 0%, #FBF6EF 55%, #F7F0E7 100%);
+  background: linear-gradient(135deg, #FFFDF9 0%, #FBF6EF 55%, #F7F0E7 100%);
   box-shadow:
     inset 0 0 0 1px rgba(180,157,126,.22),
     0 22px 48px rgba(45,42,38,.24),
@@ -58,6 +44,16 @@ const css = `
   font-size: 14px;
   line-height: 1.6;
   position: relative;
+}
+.fb-page.fb-page--cover {
+  padding: 0;
+}
+.fb-page__cover-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 /* lib rewrites inline cssText w/o position during flip — class must win */
 .fb-page.stf__item {
@@ -95,31 +91,6 @@ const css = `
     inset -20px 0 26px -16px rgba(0,0,0,.55),
     0 22px 48px rgba(45,42,38,.28),
     0 4px 10px rgba(45,42,38,.14);
-}
-.fb-page:not(.fb-page--dark)[class~="--right"]::after,
-.fb-page:not(.fb-page--dark)[class~="--left"]::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  height: 100%;
-  width: 7px;
-  pointer-events: none;
-}
-.fb-page:not(.fb-page--dark)[class~="--right"]::after {
-  right: 0;
-  background: repeating-linear-gradient(
-    to right,
-    rgba(45,42,38,.10) 0 1px,
-    rgba(45,42,38,0) 1px 3px
-  );
-}
-.fb-page:not(.fb-page--dark)[class~="--left"]::after {
-  left: 0;
-  background: repeating-linear-gradient(
-    to left,
-    rgba(45,42,38,.10) 0 1px,
-    rgba(45,42,38,0) 1px 3px
-  );
 }
 .fb-page section {
   padding: 0 !important;
@@ -160,30 +131,10 @@ const css = `
   margin: 10px auto 0;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
-.fb-page__no {
-  position: absolute;
-  bottom: 12px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-family: var(--ff-ui);
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--gold);
-}
-.fb-page__no::before,
-.fb-page__no::after {
-  content: '◆';
-  font-size: 7px;
-  color: rgba(180,157,126,.75);
-  margin: 0 10px;
-  vertical-align: 2px;
-}
 .fb-page--dark {
   background:
     radial-gradient(120% 80% at 50% -10%, rgba(184,135,122,.32), transparent 55%),
     radial-gradient(100% 70% at 50% 112%, rgba(125,142,123,.24), transparent 60%),
-    ${grain},
     linear-gradient(168deg, #332C26 0%, #40362D 46%, #241E18 100%);
   color: #EDE4D6;
   display: flex;
@@ -380,75 +331,9 @@ const css = `
 .fb-page .gift__card { padding: 18px 14px; }
 .fb-page .gift__number { font-size: 1.1rem; }
 .fb-page .btn { width: 100%; }
-.fb-bar {
-  position: fixed;
-  left: 50%;
-  bottom: 22px;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 9px 18px;
-  background: rgba(255,253,249,.88);
-  border: 1px solid rgba(180,157,126,.45);
-  backdrop-filter: blur(10px);
-  border-radius: 40px;
-  z-index: 60;
-  box-shadow: 0 12px 32px rgba(45,42,38,.22);
-}
-.fb-bar__btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(184,135,122,.16);
-  color: var(--rose-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .2s, color .2s, transform .2s;
-}
-.fb-bar__btn:hover { background: var(--rose); color: #fff; transform: scale(1.06); }
-.fb-bar__btn:disabled { opacity: .3; cursor: default; transform: none; }
-.fb-bar__btn .mi { font-size: 20px; }
-.fb-bar__range {
-  -webkit-appearance: none;
-  appearance: none;
-  width: clamp(120px, 30vw, 300px);
-  height: 3px;
-  background: rgba(45,42,38,.15);
-  border-radius: 3px;
-  outline: none;
-}
-.fb-bar__range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  background: var(--gold);
-  border: 2px solid #FFFDF9;
-  box-shadow: 0 2px 6px rgba(45,42,38,.3);
-  cursor: pointer;
-}
-.fb-bar__range::-moz-range-thumb {
-  width: 15px;
-  height: 15px;
-  border: 2px solid #FFFDF9;
-  border-radius: 50%;
-  background: var(--gold);
-  cursor: pointer;
-}
-.fb-bar__count {
-  font-family: var(--ff-ui);
-  font-size: 11px;
-  letter-spacing: 2px;
-  color: var(--ink-light);
-  min-width: 56px;
-  text-align: center;
-}
 @media (max-width: 768px), (max-height: 560px) {
   .fb-root {
-    padding: 14px 10px calc(92px + env(safe-area-inset-bottom));
+    padding: 14px 10px calc(14px + env(safe-area-inset-bottom));
   }
   .fb-page {
     padding: 22px 16px;
@@ -508,13 +393,6 @@ const css = `
   .fb-end__names { font-size: 2.2rem; }
   .fb-end__msg { font-size: 0.78rem; }
   .fb-open__bismillah { font-size: 1.15rem; }
-  .fb-bar {
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    padding: 7px 12px;
-    gap: 10px;
-  }
-  .fb-bar__range { width: clamp(80px, 22vw, 180px); }
-  .fb-bar__count { min-width: 48px; letter-spacing: 1px; }
 }
 `
 
@@ -523,13 +401,13 @@ function calcSize() {
   const vh = window.innerHeight
   if (vw < 768) {
     // portrait phone: one page
-    const w = Math.min(vw - 24, 460)
-    const h = Math.max(340, Math.min(vh - 170, w * 1.5))
+    const w = Math.max(240, Math.min(vw - 24, 460))
+    const h = Math.max(320, Math.min(vh - 56, w * 1.5))
     return { w, h }
   }
   // spread mode; short screens (landscape phone) get tighter vertical budget
-  const reserve = vh < 560 ? 110 : 130
-  const w = Math.max(150, Math.min((vw - 80) / 2, 560, (vh - reserve) / 1.45))
+  const reserve = vh < 560 ? 64 : 88
+  const w = Math.max(220, Math.min((vw - 80) / 2, 560, (vh - reserve) / 1.45))
   return { w, h: w * 1.45 }
 }
 
@@ -541,12 +419,10 @@ export default function Flipbook() {
   const [portrait, setPortrait] = useState(
     typeof window !== 'undefined' && window.innerWidth < 768
   )
-  const [page, setPage] = useState(0)
   const pageRef = useRef(0)
 
   const setPg = useCallback((n) => {
     pageRef.current = n
-    setPage(n)
   }, [])
 
   useEffect(() => {
@@ -573,8 +449,8 @@ export default function Flipbook() {
     setPg(target)
   }, [setPg])
 
-  const next = useCallback(() => go(page + 1), [go, page])
-  const prev = useCallback(() => go(page - 1), [go, page])
+  const next = useCallback(() => go(pageRef.current + 1), [go])
+  const prev = useCallback(() => go(pageRef.current - 1), [go])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -600,10 +476,18 @@ export default function Flipbook() {
 
   const pages = useMemo(() => Array.from({ length: TOTAL }, (_, index) => (
     <div
-      className={`fb-page${index === 0 || index >= TOTAL - 2 ? ' fb-page--dark' : ''}`}
+      className={`fb-page${index === 0 || index === TOTAL - 1 ? ' fb-page--cover' : ''}`}
       key={`page-${index + 1}`}
       page-number={index + 1}
-    />
+    >
+      {(index === 0 || index === TOTAL - 1) && (
+        <img
+          className="fb-page__cover-image"
+          src={index === 0 ? '/images/cover-depan.png' : '/images/cover-belakang.png'}
+          alt={index === 0 ? 'Sampul depan' : 'Sampul belakang'}
+        />
+      )}
+    </div>
   )), [])
 
   return (
@@ -617,16 +501,16 @@ export default function Flipbook() {
           width={size.w}
           height={size.h}
           size="fixed"
-          minWidth={300}
+          minWidth={portrait ? 240 : 220}
           maxWidth={700}
-          minHeight={400}
+          minHeight={320}
           maxHeight={1000}
           showCover
           usePortrait={portrait}
           startPage={0}
           flippingTime={700}
           drawShadow
-          maxShadowOpacity={0.6}
+          maxShadowOpacity={0.35}
           mobileScrollSupport={false}
           swipeDistance={30}
           autoSize={false}
@@ -636,34 +520,6 @@ export default function Flipbook() {
         </HTMLFlipBook>
       </div>
 
-      <div className="fb-bar">
-        <button
-          className="fb-bar__btn"
-          onClick={prev}
-          disabled={page === 0}
-          aria-label="Halaman sebelumnya"
-        >
-          <span className="mi">chevron_left</span>
-        </button>
-        <input
-          className="fb-bar__range"
-          type="range"
-          min={0}
-          max={TOTAL - 1}
-          value={page}
-          onChange={(e) => go(Number(e.target.value))}
-          aria-label="Geser halaman"
-        />
-        <span className="fb-bar__count">{page + 1} / {TOTAL}</span>
-        <button
-          className="fb-bar__btn"
-          onClick={next}
-          disabled={page === TOTAL - 1}
-          aria-label="Halaman berikutnya"
-        >
-          <span className="mi">chevron_right</span>
-        </button>
-      </div>
     </div>
   )
 }
