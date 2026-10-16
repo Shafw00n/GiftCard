@@ -188,3 +188,121 @@ export const backCover = {
   names: 'Ahmad & Sarah',
   date: '1st Anniversary — 20 . 12 . 2026',
 }
+
+export const poemPages = [
+  {
+    title: 'Sejak Hari Itu',
+    lines: [
+      'Hari itu tampak biasa,',
+      'hingga senyummu tinggal lebih lama.',
+      'Sejak itu, setiap jalan pulang',
+      'diam-diam menuju arah yang sama.',
+    ],
+    media: {
+      type: 'photo',
+      src: '/images/foto-7.jpeg',
+      alt: 'Bersepeda bersama di bawah matahari',
+      aspectRatio: '9 / 16',
+    },
+  },
+  {
+    title: 'Rumah Bernama Kita',
+    lines: [
+      'Rumah bukan selalu sebuah tempat,',
+      'kadang ia hadir dalam suaramu.',
+      'Di dekatmu, lelah boleh singgah,',
+      'lalu pergi tanpa membawa ragu.',
+    ],
+    media: {
+      type: 'photo',
+      src: '/images/foto-1.jpg',
+      alt: 'Kenangan kita bersama',
+      aspectRatio: '9 / 16',
+    },
+    mediaPosition: 'top',
+  },
+  {
+    title: 'Hal-Hal Kecil',
+    lines: [
+      'Tawa yang pecah di tengah jalan,',
+      'cerita yang tak selesai-selesai,',
+      'adalah hal kecil yang kusimpan',
+      'sebagai bahagia paling baik.',
+    ],
+    media: { type: 'photo', src: '/images/foto-2.jpg', alt: 'Kolase photostrip kenangan kita', aspectRatio: '9 / 16' },
+  },
+  {
+    title: 'Belajar Menjadi Kita',
+    lines: [
+      'Kita tak harus selalu sempurna,',
+      'cukup jujur saat hati berbeda.',
+      'Kita belajar saling mendengar,',
+      'dan memilih tinggal sekali lagi.',
+    ],
+    media: { type: 'photo', src: '/images/foto-5.jpeg', alt: 'Simpan foto dari hari yang berarti', aspectRatio: '1 / 1' },
+    mediaPosition: 'top',
+  },
+  {
+    title: 'Simpan Dalam Gerak',
+    lines: [
+      'Ada tawa yang ingin kuulang,',
+      'ada suara yang ingin kusimpan.',
+      'Biar waktu boleh terus berjalan,',
+      'kenangan ini tetap punya tempat.',
+    ],
+    media: { type: 'photo', src: '/images/foto-3.jpeg', alt: 'Kenangan setahun dalam gerak', aspectRatio: '9 / 16' },
+  },
+  {
+    title: 'Hari yang Mendung',
+    lines: [
+      'Jika langit tak selalu cerah,',
+      'genggam tanganku, kita berteduh.',
+      'Aku tak menjanjikan tanpa hujan,',
+      'hanya ingin melewatinya bersamamu.',
+    ],
+    media: { type: 'photo', src: '/images/foto-9.jpeg', alt: 'Foto perjalanan kita', aspectRatio: '3 / 4' },
+    mediaPosition: 'top',
+  },
+  {
+    title: 'Cara Cinta Bertumbuh',
+    lines: [
+      'Cinta tumbuh tanpa banyak suara:',
+      'secangkir pagi, kabar sederhana,',
+      'dan namamu yang selalu kutemukan',
+      'di penghujung hari yang panjang.',
+    ],
+    media: { type: 'photo', src: '/images/foto-11.jpeg', alt: 'Foto kenangan setahun bersama', aspectRatio: '9 / 16' },
+  },
+  {
+    title: 'Satu Tahun',
+    lines: [
+      'Dua belas bulan merangkai cerita,',
+      'ratusan hari mengajar kita percaya.',
+      'Bukan hitungan yang membuatnya indah,',
+      'melainkan kita yang menjalaninya.',
+    ],
+    media: { type: 'photo', src: '/images/foto-12.jpeg', alt: 'Foto perayaan setahun', aspectRatio: '9 / 16' },
+    mediaPosition: 'top',
+  },
+  {
+    title: 'Segala yang Akan Datang',
+    lines: [
+      'Masih ada pagi yang belum kita tahu,',
+      'jalan baru, kota, dan cerita.',
+      'Ke mana pun esok membawa langkah,',
+      'semoga selalu ada kita di sana.',
+    ],
+    media: { type: 'photo', src: '/images/foto-13.JPG', alt: 'Foto untuk kisah berikutnya', aspectRatio: '9 / 16' },
+  },
+  {
+    title: 'Selama Ada Esok',
+    lines: [
+      'Bila esok membuka halaman,',
+      'mari kita isi perlahan-lahan.',
+      'Tak perlu kata yang paling indah,',
+      'asal ditulis oleh kita berdua.',
+    ],
+    media: { type: 'photo', src: '/images/wanab%20gif%201.gif', alt: 'GIF kenangan penutup cerita ini', aspectRatio: '4 / 3' },
+    mediaPosition: 'top',
+  },
+]

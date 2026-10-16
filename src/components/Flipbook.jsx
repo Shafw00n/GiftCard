@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import HTMLFlipBook from 'react-pageflip'
 import 'page-flip/src/Style/stPageFlip.css'
+import { poemPages } from '../content.js'
 
-const TOTAL = 12
+const TOTAL = poemPages.length + 2
 
 const css = `
 .fb-root {
@@ -16,10 +17,10 @@ const css = `
   -webkit-user-select: none;
   user-select: none;
   background:
-    radial-gradient(900px 620px at 10% 6%, rgba(184,135,122,.28), transparent 62%),
-    radial-gradient(860px 720px at 92% 88%, rgba(125,142,123,.26), transparent 62%),
-    radial-gradient(640px 460px at 78% 12%, rgba(180,157,126,.20), transparent 66%),
-    linear-gradient(160deg, #F8F2EC 0%, #F1E9E1 48%, #EBE3D9 100%);
+    radial-gradient(1000px 700px at 15% 4%, rgba(240,229,206,.22), transparent 58%),
+    radial-gradient(900px 760px at 90% 92%, rgba(176,95,58,.30), transparent 62%),
+    radial-gradient(700px 520px at 82% 10%, rgba(214,183,143,.16), transparent 64%),
+    linear-gradient(160deg, #7B573C 0%, #6B4832 48%, #573927 100%);
 }
 .fb-root input,
 .fb-root textarea,
@@ -55,6 +56,173 @@ const css = `
   height: 100%;
   object-fit: cover;
 }
+/* --- decoration: halaman isi saja (cover tidak disentuh) --- */
+.fb-page:not(.fb-page--cover) {
+  background:
+    radial-gradient(120% 85% at 50% -8%, rgba(255,252,246,.95), rgba(255,252,246,0) 60%),
+    repeating-linear-gradient(0deg, rgba(180,157,126,.028) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgba(180,157,126,.020) 0 1px, transparent 1px 4px),
+    radial-gradient(135% 105% at 50% 50%, rgba(255,253,249,0) 62%, rgba(120,98,78,.07) 100%),
+    linear-gradient(135deg, #FFFDF9 0%, #FBF6EF 55%, #F7F0E7 100%);
+}
+.fb-page:not(.fb-page--cover)::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(180,157,126,.42);
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) left -1px top -1px / 20px 2px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) left -1px top -1px / 2px 20px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) right -1px top -1px / 20px 2px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) right -1px top -1px / 2px 20px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) left -1px bottom -1px / 20px 2px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) left -1px bottom -1px / 2px 20px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) right -1px bottom -1px / 20px 2px no-repeat,
+    linear-gradient(rgba(180,157,126,.78), rgba(180,157,126,.78)) right -1px bottom -1px / 2px 20px no-repeat;
+}
+.fb-page:not(.fb-page--cover)::after {
+  content: '— ' attr(page-number) ' —';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 19px;
+  pointer-events: none;
+  text-align: center;
+  font-family: var(--ff-ui);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: rgba(180,157,126,.85);
+}
+.poem-page {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 22px;
+  text-align: left;
+}
+.poem-page__copy {
+  width: 100%;
+  margin: 0;
+}
+.poem-page__title {
+  margin: 0 0 24px;
+  color: var(--ink);
+  font-family: var(--ff-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.poem-page__title::after {
+  content: '';
+  display: block;
+  width: 7px;
+  height: 7px;
+  margin-top: 14px;
+  transform: rotate(45deg);
+  background: linear-gradient(135deg, var(--rose), var(--gold));
+  opacity: .85;
+}
+.poem-page__verse {
+  color: var(--ink-light);
+  font-family: var(--ff-body);
+  font-size: 1.05rem;
+  line-height: 1.9;
+}
+.poem-page__verse span {
+  display: block;
+}
+.poem-page__verse span:first-child {
+  color: var(--ink);
+  font-style: italic;
+}
+.poem-page__media {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 3;
+  flex: 0 1 auto;
+  position: relative;
+  overflow: visible;
+  margin: 0;
+  padding: 6px;
+  border: 1px solid rgba(180,157,126,.45);
+  background: rgba(255,255,255,.84);
+  box-shadow: 0 8px 22px rgba(45,42,38,.12);
+}
+.poem-page__media--video {
+  aspect-ratio: 16 / 9;
+}
+.poem-page__media--photo {
+  width: auto;
+  height: 46%;
+  max-width: 100%;
+}
+.fb-page:nth-child(even) .poem-page__media--photo {
+  align-self: flex-end;
+}
+/* washi-tape accents */
+.poem-page__media::before,
+.poem-page__media::after {
+  content: '';
+  position: absolute;
+  width: 64px;
+  height: 18px;
+  pointer-events: none;
+  box-shadow: 0 1px 3px rgba(45,42,38,.15);
+}
+.poem-page__media::before {
+  top: -9px;
+  left: 9%;
+  transform: rotate(-5deg);
+  background: linear-gradient(100deg, rgba(184,135,122,.44), rgba(184,135,122,.26));
+}
+.poem-page__media::after {
+  bottom: -9px;
+  right: 10%;
+  transform: rotate(4deg);
+  background: linear-gradient(100deg, rgba(125,142,123,.40), rgba(125,142,123,.24));
+}
+.fb-page:nth-child(odd) .poem-page__media::before {
+  background: linear-gradient(100deg, rgba(180,157,126,.46), rgba(180,157,126,.28));
+}
+.poem-page__media img,
+.poem-page__photo-placeholder,
+.poem-page__video-placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.poem-page__media img {
+  object-fit: contain;
+  background: #F4EEE7;
+}
+.poem-page__photo-placeholder {
+  background: linear-gradient(145deg, rgba(184,135,122,.10), rgba(125,142,123,.10));
+}
+.poem-page__video-placeholder {
+  display: grid;
+  place-items: center;
+  color: #F7F0E7;
+  background: linear-gradient(145deg, #40362D, #241E18);
+}
+.poem-page__play {
+  display: grid;
+  width: 48px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid rgba(201,171,126,.72);
+  border-radius: 50%;
+  color: #C9AB7E;
+}
+.poem-page__play .mi {
+  font-size: 28px;
+}
+.poem-page--media-first .poem-page__media {
+  order: -1;
+}
 /* lib rewrites inline cssText w/o position during flip — class must win */
 .fb-page.stf__item {
   position: absolute;
@@ -77,20 +245,6 @@ const css = `
     inset -18px 0 24px -16px rgba(45,42,38,.45),
     0 22px 48px rgba(45,42,38,.24),
     0 4px 10px rgba(45,42,38,.12);
-}
-.fb-page--dark[class~="--right"] {
-  box-shadow:
-    inset 0 0 0 1px rgba(201,171,126,.28),
-    inset 20px 0 26px -16px rgba(0,0,0,.55),
-    0 22px 48px rgba(45,42,38,.28),
-    0 4px 10px rgba(45,42,38,.14);
-}
-.fb-page--dark[class~="--left"] {
-  box-shadow:
-    inset 0 0 0 1px rgba(201,171,126,.28),
-    inset -20px 0 26px -16px rgba(0,0,0,.55),
-    0 22px 48px rgba(45,42,38,.28),
-    0 4px 10px rgba(45,42,38,.14);
 }
 .fb-page section {
   padding: 0 !important;
@@ -130,156 +284,6 @@ const css = `
   height: 1px;
   margin: 10px auto 0;
   background: linear-gradient(90deg, transparent, var(--gold), transparent);
-}
-.fb-page--dark {
-  background:
-    radial-gradient(120% 80% at 50% -10%, rgba(184,135,122,.32), transparent 55%),
-    radial-gradient(100% 70% at 50% 112%, rgba(125,142,123,.24), transparent 60%),
-    linear-gradient(168deg, #332C26 0%, #40362D 46%, #241E18 100%);
-  color: #EDE4D6;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  box-shadow:
-    inset 0 0 0 1px rgba(201,171,126,.28),
-    0 22px 48px rgba(45,42,38,.28),
-    0 4px 10px rgba(45,42,38,.14);
-}
-.fb-page--dark::before,
-.fb-page--dark::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-}
-.fb-page--dark::before {
-  inset: 14px;
-  border: 1px solid rgba(201,171,126,.55);
-}
-.fb-page--dark::after {
-  inset: 20px;
-  border: 1px solid rgba(201,171,126,.22);
-}
-.fb-cover__label {
-  font-family: var(--ff-ui);
-  font-size: 11px;
-  letter-spacing: 6px;
-  text-transform: uppercase;
-  color: rgba(201,171,126,.9);
-  margin-bottom: 26px;
-}
-.fb-cover__names {
-  font-family: var(--ff-script);
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 3rem;
-  line-height: 1.15;
-  color: #F2E5D2;
-  text-shadow: 0 2px 12px rgba(0,0,0,.35);
-}
-.fb-cover__names em {
-  font-family: var(--ff-display);
-  font-style: italic;
-  font-size: 1.3rem;
-  color: #C9AB7E;
-  line-height: 1.4;
-}
-.fb-cover__date {
-  font-family: var(--ff-ui);
-  font-size: 11px;
-  letter-spacing: 5px;
-  color: rgba(237,228,214,.6);
-  margin-top: 26px;
-}
-.fb-cover__orn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin: 30px 0;
-}
-.fb-cover__orn::before,
-.fb-cover__orn::after {
-  content: '';
-  width: 76px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,171,126,.95));
-}
-.fb-cover__orn::after {
-  background: linear-gradient(90deg, rgba(201,171,126,.95), transparent);
-}
-.fb-orn__dot {
-  display: block;
-  width: 7px;
-  height: 7px;
-  background: #C9AB7E;
-  transform: rotate(45deg);
-}
-.fb-cover__open {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--ff-ui);
-  font-size: 11px;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: #EDE4D6;
-  border: 1px solid rgba(201,171,126,.7);
-  padding: 13px 26px;
-  border-radius: 40px;
-  transition: background .3s, color .3s, box-shadow .3s;
-}
-.fb-cover__open:hover {
-  background: #C9AB7E;
-  color: #241E18;
-  box-shadow: 0 8px 22px rgba(201,171,126,.35);
-}
-.fb-cover__open .mi { font-size: 16px; }
-.fb-open__salam {
-  font-family: var(--ff-body);
-  color: var(--ink-light);
-  margin-bottom: 16px;
-}
-.fb-open__bismillah {
-  font-family: var(--ff-display);
-  font-size: 1.4rem;
-  color: var(--ink);
-  margin-bottom: 24px;
-}
-.fb-open__quote {
-  font-family: var(--ff-display);
-  font-style: italic;
-  font-size: 1.05rem;
-  color: var(--ink-light);
-  line-height: 1.8;
-  border-left: 2px solid var(--rose);
-  padding-left: 16px;
-  text-align: left;
-  margin-top: 24px;
-}
-.fb-open__names {
-  font-family: var(--ff-display);
-  font-size: 1.6rem;
-  color: var(--ink);
-  margin: 24px 0 8px;
-}
-.fb-end__names {
-  font-family: var(--ff-script);
-  font-size: 2.8rem;
-  line-height: 1.2;
-  color: #F2E5D2;
-  margin-bottom: 16px;
-  text-shadow: 0 2px 12px rgba(0,0,0,.35);
-}
-.fb-end__msg {
-  font-family: var(--ff-ui);
-  font-size: 0.85rem;
-  letter-spacing: 1px;
-  line-height: 1.9;
-  color: rgba(237,228,214,.65);
-  max-width: 360px;
-  margin: 0 auto;
 }
 .fb-page .couple__photo {
   width: 108px;
@@ -339,6 +343,17 @@ const css = `
     padding: 22px 16px;
     font-size: 13px;
   }
+  .poem-page { gap: 16px; }
+  .poem-page__title { margin-bottom: 14px; font-size: 1.2rem; }
+  .poem-page__verse { font-size: 0.9rem; line-height: 1.75; }
+  .poem-page__media { max-width: 100%; }
+  .poem-page__media--photo { height: 44%; max-width: 84%; }
+  .poem-page__play { width: 42px; }
+  .fb-page:not(.fb-page--cover)::before { inset: 8px; }
+  .fb-page:not(.fb-page--cover)::after { bottom: 12px; font-size: 8px; letter-spacing: 2px; }
+  .poem-page__media::before,
+  .poem-page__media::after { width: 46px; height: 14px; }
+  .poem-page__title::after { margin-top: 10px; }
   .fb-page .sh { margin-bottom: 14px; }
   .fb-page .sh__title { font-size: 1.1rem; }
   .fb-page .sh__title::after { width: 44px; margin-top: 8px; }
@@ -383,16 +398,6 @@ const css = `
   .fb-page .gift__cards { grid-template-columns: 1fr; gap: 10px; }
   .fb-page .gift__card { padding: 14px 12px; }
   .fb-page .gift__note { font-size: 0.78rem; margin-bottom: 12px; }
-  .fb-cover__label { letter-spacing: 4px; margin-bottom: 18px; }
-  .fb-cover__names { font-size: 2.3rem; }
-  .fb-cover__date { letter-spacing: 4px; margin-top: 18px; }
-  .fb-cover__orn { margin: 22px 0; gap: 10px; }
-  .fb-cover__orn::before,
-  .fb-cover__orn::after { width: 48px; }
-  .fb-cover__open { padding: 14px 26px; }
-  .fb-end__names { font-size: 2.2rem; }
-  .fb-end__msg { font-size: 0.78rem; }
-  .fb-open__bismillah { font-size: 1.15rem; }
 }
 `
 
@@ -409,6 +414,28 @@ function calcSize() {
   const reserve = vh < 560 ? 64 : 88
   const w = Math.max(220, Math.min((vw - 80) / 2, 560, (vh - reserve) / 1.45))
   return { w, h: w * 1.45 }
+}
+
+function PoemMedia({ media }) {
+  const label = media.alt || (media.type === 'video' ? 'Tempat video' : 'Tempat foto');
+
+  return (
+    <figure
+      className={`poem-page__media poem-page__media--${media.type}`}
+      style={media.aspectRatio ? { aspectRatio: media.aspectRatio } : undefined}
+      aria-label={label}
+    >
+      {media.src ? (
+        <img src={media.src} alt={label} />
+      ) : media.type === 'video' ? (
+        <div className="poem-page__video-placeholder" aria-hidden="true">
+          <span className="poem-page__play"><span className="mi">play_arrow</span></span>
+        </div>
+      ) : (
+        <div className="poem-page__photo-placeholder" aria-hidden="true" />
+      )}
+    </figure>
+  )
 }
 
 export default function Flipbook() {
@@ -474,21 +501,38 @@ export default function Flipbook() {
     return () => clearTimeout(id)
   }, [size])
 
-  const pages = useMemo(() => Array.from({ length: TOTAL }, (_, index) => (
-    <div
-      className={`fb-page${index === 0 || index === TOTAL - 1 ? ' fb-page--cover' : ''}`}
-      key={`page-${index + 1}`}
-      page-number={index + 1}
-    >
-      {(index === 0 || index === TOTAL - 1) && (
-        <img
-          className="fb-page__cover-image"
-          src={index === 0 ? '/images/cover-depan.png' : '/images/cover-belakang.png'}
-          alt={index === 0 ? 'Sampul depan' : 'Sampul belakang'}
-        />
-      )}
-    </div>
-  )), [])
+  const pages = useMemo(() => Array.from({ length: TOTAL }, (_, index) => {
+    const isFrontCover = index === 0
+    const isBackCover = index === TOTAL - 1
+    const poem = !isFrontCover && !isBackCover ? poemPages[index - 1] : null
+
+    return (
+      <div
+        className={`fb-page${isFrontCover || isBackCover ? ' fb-page--cover' : ''}`}
+        key={`page-${index + 1}`}
+        page-number={index + 1}
+      >
+        {isFrontCover || isBackCover ? (
+          <img
+            className="fb-page__cover-image"
+            src={isFrontCover ? '/images/cover-depan.png' : '/images/cover-belakang.png'}
+            alt={isFrontCover ? 'Sampul depan' : 'Sampul belakang'}
+          />
+        ) : (
+          <article className={`poem-page${poem.mediaPosition === 'top' ? ' poem-page--media-first' : ''}`}>
+            {poem.mediaPosition === 'top' && <PoemMedia media={poem.media} />}
+            <div className="poem-page__copy">
+              <h2 className="poem-page__title">{poem.title}</h2>
+              <p className="poem-page__verse">
+                {poem.lines.map((line, lineIndex) => <span key={`${index}-${lineIndex}`}>{line}</span>)}
+              </p>
+            </div>
+            {poem.mediaPosition !== 'top' && <PoemMedia media={poem.media} />}
+          </article>
+        )}
+      </div>
+    )
+  }), [])
 
   return (
     <div className="fb-root">
