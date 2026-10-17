@@ -1,13 +1,13 @@
-# Kartu Ucapan Flipbook — Abelya
+# Kartu Ucapan Flipbook
 
-Buku flipbook 12 halaman (React 18 + Vite + `react-pageflip`). Sampul depan/belakang = gambar PNG; 10 halaman isi = puisi + foto/GIF. Backdrop coklat senada kolase sampul.
+Template buku kartu ucapan 12 halaman (React 18 + Vite + `react-pageflip`). Sampul depan/belakang = gambar PNG; 10 halaman isi = puisi + foto/GIF. Backdrop coklat senada kolase sampul. Semua konten kartu tinggal diganti — lihat "Ganti konten".
 
 ## Struktur
 
 ```
 index.html              title/description manual (bukan dari content.js)
 public/images/          cover-depan.png, cover-belakang.png, foto-*.jpeg|jpg, *.gif
-public/music/           anniversary-song.mp3
+public/music/           lagu.mp3
 src/content.js          SEMUA konten puisi (poemPages). Export lain (meta, cover, opening, couple,
                         countdown, events, story, gallery, rsvp, wishes, hopes, closing, backCover)
                         TIDAK dirender — jangan dihapus, bisa dipakai kembali
@@ -43,7 +43,7 @@ src/index.css           variabel warna/font + gaya komponen lama
 2. Foto → taruh di `public/images/`, tulis `src` (`/images/nama.ext`). `aspectRatio` HARUS sesuai rasio file asli (mis. `9 / 16`, `3 / 4`, `1 / 1`) — kalau tidak, bingkai tidak pas.
 3. GIF → sama seperti foto; animasi jalan otomatis di `<img>`. Nama file dengan spasi: encode `%20` di `src`.
 4. Sampul → ganti `public/images/cover-depan.png` / `cover-belakang.png` (nama sama).
-5. Musik → ganti file `public/music/anniversary-song.mp3`.
+5. Musik → ganti file `public/music/lagu.mp3`.
 6. Judul tab + preview link (Telegram/WA) → `index.html` (`<title>`, `<meta name="description">`).
 7. Nama package → `package.json` (`name`).
 
@@ -52,6 +52,5 @@ src/index.css           variabel warna/font + gaya komponen lama
 - Dev: `npm run dev` → http://localhost:3000 (auto-open browser)
 - Build: `npm run build` → hasil di `dist/`
 - Deploy: Vercel → Add New → Project → import repo GitHub → preset **Vite** default (build `npm run build`, output `dist`). Push ke `main` = auto-redeploy.
-- Contoh live: github.com/Shafw00n/GiftCard → abelyachan.vercel.app
 - Kalau perubahan tidak muncul di browser saat dev: restart dev server (file watcher di drive ini kadang telat), lalu hard refresh.
 - Diketahui: favicon `index.html` menunjuk `/vite.svg` yang tidak ada (404, tidak fatal).

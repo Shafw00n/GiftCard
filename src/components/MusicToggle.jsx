@@ -8,7 +8,7 @@ export default function MusicToggle() {
     audioRef.current = new Audio()
     audioRef.current.loop = true
     audioRef.current.volume = 0.3
-    audioRef.current.src = '/music/anniversary-song.mp3'
+    audioRef.current.src = '/music/lagu.mp3'
 
     return () => {
       if (audioRef.current) {
