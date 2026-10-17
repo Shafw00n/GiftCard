@@ -1,45 +1,57 @@
-# GiftCard — Kartu Ucapan Flipbook
+# Kartu Ucapan Flipbook — Abelya
 
-Buku flipbook12 halaman (React18 + Vite + `react-pageflip`). Sampul = gambar PNG, halaman tengah sengaja KOSONG (photo-ready) — isi nanti: foto → teks → video.
+Buku flipbook 12 halaman (React 18 + Vite + `react-pageflip`). Sampul depan/belakang = gambar PNG; 10 halaman isi = puisi + foto/GIF. Backdrop coklat senada kolase sampul.
 
 ## Struktur
 
 ```
 index.html              title/description manual (bukan dari content.js)
-public/images/          cover-depan.png, cover-belakang.png (sampul halaman0 &11)
-src/content.js          SEMUA teks/data — ganti konten cukup di sini
+public/images/          cover-depan.png, cover-belakang.png, foto-*.jpeg|jpg, *.gif
+public/music/           anniversary-song.mp3
+src/content.js          SEMUA konten puisi (poemPages). Export lain (meta, cover, opening, couple,
+                        countdown, events, story, gallery, rsvp, wishes, hopes, closing, backCover)
+                        TIDAK dirender — jangan dihapus, bisa dipakai kembali
 src/App.jsx             render Flipbook + MusicToggle saja
 src/components/
-  Flipbook.jsx          engine buku + CSS embedded (style string `css`)
-  Couple.jsx            sudah import content.js
-  Countdown.jsx         sudah import content.js
-  EventDetails.jsx      sudah import content.js
-  LoveStory.jsx         sudah import content.js
-  Gallery.jsx           sudah import content.js
-  Rsvp.jsx, Wishes.jsx, Gift.jsx   BELUM wire ke content.js (gaya lama, belum dirender)
-  MusicToggle.jsx       tombol musik (mp3 dimatikan, isi manual)
-src/index.css           gaya halaman-manual (couple, events, gift, wishes...)
+  Flipbook.jsx          engine buku + SEMUA CSS halaman isi (style string `css`)
+  MusicToggle.jsx       tombol musik kanan bawah (mp3 aktif, volume 0.3, loop)
+  Couple/Countdown/EventDetails/LoveStory/Gallery/Rsvp/Wishes/Gift.jsx
+                        komponen lama — tidak dirender, jangan dihapus
+src/index.css           variabel warna/font + gaya komponen lama
 ```
 
-## Konvensi buku
+## Konvensi buku (jangan diubah tanpa alasan)
 
-- `TOTAL =12` di Flipbook.jsx. `pages` = `Array.from({length: TOTAL})` → index0 = sampul depan (img `cover-depan.png`), index11 = sampul belakang (img `cover-belakang.png`), index1-10 = halaman isi KOSONG.
-- Class halaman: `fb-page`, sampul `fb-page--cover` (padding0 + `fb-page__cover-image`). Jangan pakai `fb-page--dark` (dihapus).
-- Shading tulang buku pakai selector `[class~="--left"]` / `[class~="--right"]` dari lib.
-- `.fb-page.stf__item { position: absolute }` — WAJIB, lib nulis inline `cssText` tanpa position saat flip (kalau hilang, halaman lompat).
-- CSS `.fb-page .couple__*`, `.fb-page .events__*`, dst = kompatibilitas kalau section lama dimasukkan balik ke halaman — jangan dihapus.
-- Navigasi: klik tepi halaman, swipe, keyboard ←/→. Tidak ada kontrol bar (sengaja dihapus).
-- `calcSize()` sudah disetel tanpa ruang bar bawah — kalau tambah elemen fixed, sesuaikan `reserve`/`vh-56`.
+- `TOTAL = poemPages.length + 2`. Index 0 = sampul depan, index terakhir = sampul belakang, tengah = `poemPages` berurutan.
+- Class halaman: `fb-page`, sampul `fb-page--cover` (padding 0 + `fb-page__cover-image`). Jangan pakai `fb-page--dark` (dihapus).
+- `.fb-page.stf__item { position: absolute }` — WAJIB; lib menulis inline `cssText` tanpa position saat flip (kalau hilang, halaman lompat).
+- Shading tulang buku pakai selector `[class~="--left"]` / `[class~="--right"]`.
+- Navigasi: klik tepi halaman, swipe, keyboard ←/→. Tanpa kontrol bar.
+- `calcSize()` tanpa ruang bar bawah — kalau tambah elemen fixed, sesuaikan `reserve`.
 
-## Ganti konten
+## Dekorasi halaman isi (semua di CSS string `Flipbook.jsx`)
 
-1. Teks/data → edit `src/content.js` saja.
-2. Sampul → ganti `public/images/cover-depan.png` / `cover-belakang.png` (nama sama, ukuran bebas, `object-fit: cover`).
-3. Tambah halaman → ubah `TOTAL` + sisipkan isi di blok `pages` (index ditentukan `showCover` + `usePortrait`).
-4. Musik → taruh mp3, uncomment baris di `MusicToggle.jsx`.
+- Di-scope `.fb-page:not(.fb-page--cover)` — sampul TIDAK boleh kena dekorasi.
+- `::before` = bingkai emas + aksen sudut. `::after` = folio nomor halaman (`attr(page-number)`).
+- Washi tape = pseudo-element `.poem-page__media` (rose/sage/gold, berselang halaman ganjil/genap).
+- Grain kertas + vignette = background berlapis di halaman isi.
+- Ukuran mobile di `@media (max-width: 768px), (max-height: 560px)`: judul 1.2rem, puisi 0.9rem, foto `height: 44%` + `max-width: 84%`.
 
-## Perintah
+## Ganti konten (untuk duplikat / kartu baru)
 
-- Dev: `npm run dev` → http://localhost:3000
-- Build: `npm run build`
-- Repo: `https://github.com/Shafw00n/GiftCard` (remote `origin`, branch `main`)
+1. Teks/puisi → `src/content.js` blok `poemPages`. Tiap entri: `title`, `lines` (array; 1 baris = 1 span), `media` (`type: 'photo'` atau `'video'`, `src`, `alt`, `aspectRatio`), opsional `mediaPosition: 'top'`.
+2. Foto → taruh di `public/images/`, tulis `src` (`/images/nama.ext`). `aspectRatio` HARUS sesuai rasio file asli (mis. `9 / 16`, `3 / 4`, `1 / 1`) — kalau tidak, bingkai tidak pas.
+3. GIF → sama seperti foto; animasi jalan otomatis di `<img>`. Nama file dengan spasi: encode `%20` di `src`.
+4. Sampul → ganti `public/images/cover-depan.png` / `cover-belakang.png` (nama sama).
+5. Musik → ganti file `public/music/anniversary-song.mp3`.
+6. Judul tab + preview link (Telegram/WA) → `index.html` (`<title>`, `<meta name="description">`).
+7. Nama package → `package.json` (`name`).
+
+## Perintah & deploy
+
+- Dev: `npm run dev` → http://localhost:3000 (auto-open browser)
+- Build: `npm run build` → hasil di `dist/`
+- Deploy: Vercel → Add New → Project → import repo GitHub → preset **Vite** default (build `npm run build`, output `dist`). Push ke `main` = auto-redeploy.
+- Contoh live: github.com/Shafw00n/GiftCard → abelyachan.vercel.app
+- Kalau perubahan tidak muncul di browser saat dev: restart dev server (file watcher di drive ini kadang telat), lalu hard refresh.
+- Diketahui: favicon `index.html` menunjuk `/vite.svg` yang tidak ada (404, tidak fatal).
